@@ -21,7 +21,7 @@ for i in range(10):
     bandit_list.append(Bandit(random.randint(-10, 11)))
 
 #Epsilon-greedy algorithm
-epsilon = 0.1
+epsilon = 1
 Q = [0 for x in range(10)]
 N = [0 for x in range(10)]
 for i in range(arm_pulls):
@@ -34,9 +34,10 @@ for i in range(arm_pulls):
     reward = chosen_bandit.pull()
     N[index] += 1
     Q[index] = Q[index] + (1 / N[index]) * (reward - Q[index])
+
 #’bo’ is for blue dot, ‘b’ is for solid blue line
-plt.plot([x for x in range(10)], Q, 'bo', label='Average reward')
-#plt.plot(arm_pulls, val_loss_values, 'b', label='Validation accuracy')
+plt.plot([x for x in range(10)], Q, 'bo', label='Expected reward')
+plt.plot([x for x in range(10)], N, 'yo', label='Number of arm pulls')
 plt.title('The best plot ever with epsilon =%f' %epsilon)
 plt.xlabel('Bandit')
 plt.ylabel('Q')
