@@ -1,4 +1,5 @@
 import copy
+import math
 ## Basic implementation of iterative policy evaluation (see p. 75 in Sutton
  # and Barto (2018) "Reinformcement Learning, an Introduction") for a deterministic
  # 2D lattice environment.
@@ -82,10 +83,24 @@ def get_reward(s, action):
             return 0
 
 
-# Get the next action according to the current policy:
-# todo: make it look around in the environment to find the estimates of surrounding states to find the best action
+# OLD DESCRIPTION: Get the next action according to the current policy:
+# NEW: Computes the estimates of surrounding states to find the best action to return
 def get_next_action(s):
-    return RIGHT
+
+    possible_actions = [UP, DOWN, LEFT, RIGHT]
+    max_val = -math.inf
+    best_action = RIGHT
+    for action in possible_actions:
+        next_state = get_next_state(s, action)
+        reward = get_reward(s, action)
+        if not next_state.is_outside_environment:
+            if V[next_state.y][next_state.x] + reward > max_val:
+                max_val = V[next_state.y][next_state.x] + reward
+                best_action = action
+    return best_action
+
+
+
 
 
 # Print the environment with border around:
