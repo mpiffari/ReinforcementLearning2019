@@ -27,7 +27,7 @@ def epsilon_greedy():
         bandit_list.append(Bandit(random.randint(min_interval, max_interval)))
 
     total_reward = 0
-    epsilon = 0.1
+    epsilon = 1
     Q = [0 for x in range(bandit_amount)]
     N = [0 for x in range(bandit_amount)]
     avg_reward_list = []
@@ -46,11 +46,10 @@ def epsilon_greedy():
         Q[index] = Q[index] + (1 / N[index]) * (reward - Q[index])
 
     #######################################
-    #plt.plot(0, bandit_list[0].rewards_obtained, 'go', label='Reward distribution')
-    # plt.plot([x for x in range(arm_pulls)], avg_reward_list, 'go', label='Epsilon Greedy')
-    # plt.title('The best plot ever with epsilon = %f' % epsilon)
-    # plt.xlabel('Arm pulls')
-    # plt.ylabel('Average reward')
+    plt.plot([x for x in range(arm_pulls)], avg_reward_list, 'go', label='Epsilon Greedy')
+    plt.title('Average performance with epsilon = %f' % epsilon)
+    plt.xlabel('Arm pulls')
+    plt.ylabel('Average reward')
     #######################################
 
     #######################################
@@ -136,8 +135,8 @@ def ucb():
     plt.legend()
     ####################################
 
-ucb()
-#epsilon_greedy()
+#ucb()
+epsilon_greedy()
 #optimistic_greedy()
 
 plt.show()
