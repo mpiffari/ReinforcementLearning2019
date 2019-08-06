@@ -83,6 +83,7 @@ def get_reward(s, action):
 
 
 # Get the next action according to the current policy:
+# todo: make it look around in the environment to find the estimates of surrounding states to find the best action
 def get_next_action(s):
     return RIGHT
 
@@ -102,9 +103,10 @@ def print_environment():
 def print_state_values():
     for y in range(0, ROWS):
         for x in range(0, COLUMS):
-            print("%5.2f" %V[y][x], end='|')
+            print("%5.2f" %V[y][x], end=' ')
         print("")
     print("")
+
 
 print("Environment:")
 print_environment()
@@ -138,5 +140,5 @@ while True:
     print("Sweep #", sweep, ", delta:", delta)
     sweep += 1
     print_state_values()
-    if (delta <= theta): # Check if our currect estimate is accurate enough.
+    if delta <= theta:  # Check if our currect estimate is accurate enough.
         break
