@@ -102,7 +102,7 @@ def print_environment():
 def print_state_values():
     for y in range(0, ROWS):
         for x in range(0, COLUMS):
-            print("%5.2f" %V[y][x], end='|')
+            print("%5.2f" %V[y][x], end=' ')
         print("")
     print("")
 
