@@ -24,9 +24,9 @@ RIGHT = 3
 
 # Environment -- spaces: agent can move, "+": reward, "-": punishment.
 
-environment = [[' ', ' ', ' ', '+'],
+environment = [[' ', ' ', ' ', ''],
                [' ', '#', ' ', '-'],
-               [' ', ' ', ' ', ' ']]
+               [' ', ' ', ' ', '+']]
 
 Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMS)] for y in range(ROWS)]
 
@@ -36,7 +36,7 @@ V = [[0.0 for x in range(COLUMS)] for y in range(ROWS)]
 
 
 class State():
-    def __init__(self, x, y, is_outside_environment):
+    def __init__(self, y, x, is_outside_environment):
         self.x = x
         self.y = y
         self.is_outside_environment = is_outside_environment
@@ -154,6 +154,7 @@ episode_amount = 170
 state = State(0, 2, False)
 # Start of estimation loop
 for i in range(episode_amount):
+    state = State(0, 2, False)
     while True:
         delta = 0
 
@@ -180,12 +181,17 @@ for i in range(episode_amount):
         discount_rate = 0.9
 
         if state.is_terminal_state():  # If we reach terminal state, stop
+            print("Terminal state reached")
             break
 
         a = get_next_action(state)
         reward = get_reward(state, a)
-        print(reward)
+
         next_s = get_next_state(state, a)
+        if (next_s == state):
+            print("(", state.y, ",", state.x, ")"", Reward:", reward, "(Bump)")
+        else:
+            print("(", state.y, ",", state.x, ")"", Reward:", reward)
 
         if not next_s.is_outside_environment:
             Q_matrix[state.y][state.x][a] = Q_matrix[state.y][state.x][a] + \
