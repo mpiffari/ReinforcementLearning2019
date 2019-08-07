@@ -15,7 +15,7 @@ main_environment = [[' ', ' ', ' ', ' ', ' '],
 
 #Dimensions of the environment
 COLUMNS = 5
-ROWS = 4
+ROWS = 5
 
 # Actions
 UP = 0
@@ -25,9 +25,9 @@ RIGHT = 3
 # Algorithm parameters
 Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMNS)] for y in range(ROWS)]
 action_selected_matrix = [[0 for x in range(COLUMNS)] for y in range(ROWS)]
-step_size = 0.15  # Alpha
+step_size = 0.2  # Alpha
 discount_rate = 0.9  # Gamma
-epsilon = 0.15
+epsilon = 0.1
 episode_amount = 50
 reward_for_each_episode = [0 for x in range(episode_amount)]
 index = 0
@@ -146,7 +146,7 @@ start_state = State(4, 0, False)
 for j in range(episode_amount):
     environment = main_environment
     for i in range(j):
-        start_state = State(2, 0, False)
+        start_state = State(4, 0, False)
         while True:
 
             if start_state.is_terminal_state():  # If we reach terminal state, stop
