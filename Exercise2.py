@@ -2,6 +2,7 @@ import copy
 import math
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 ## Basic implementation of iterative policy evaluation (see p. 75 in Sutton
  # and Barto (2018) "Reinformcement Learning, an Introduction") for a deterministic
  # 2D lattice environment.
@@ -143,54 +144,70 @@ print("Environment:")
 print_environment()
 
 
-episode_amount = 170
+episode_amount = 200
+reward_for_each_episode = [0 for x in range(episode_amount)]
+index = 0
 state = State(2, 0, False)
 # Start of estimation loop
-for i in range(episode_amount):
-    state = State(2, 0, False)
-    while True:
-        delta = 0
+for j in range(episode_amount):
+    for i in range(j):
+        state = State(2, 0, False)
+        while True:
+            delta = 0
 
-        # Perform a full sweep over the whole state space:
+            # Perform a full sweep over the whole state space:
 
-        #for y in range(0, ROWS):
-        #    for x in range(0, COLUMS):
-    #
-        #        state.x = x
-        #        state.y = y
-        #        if environment[y][x] == ' ':
-        #            v = V[y][x]
-        #            a = get_next_action(state)
-        #            reward = get_reward(state, a)
-        #            next_s = get_next_state(state, a)
-        #            if not next_s.is_outside_environment:
-        #                V[y][x] = reward + discount_rate * V[next_s.y][next_s.x]
-        #            delta = max(delta, abs(v - V[y][x]))
-        #print("Sweep #", sweep, ", delta:", delta)
-        #sweep += 1
-        #print_state_values()
+            #for y in range(0, ROWS):
+            #    for x in range(0, COLUMS):
+        #
+            #        state.x = x
+            #        state.y = y
+            #        if environment[y][x] == ' ':
+            #            v = V[y][x]
+            #            a = get_next_action(state)
+            #            reward = get_reward(state, a)
+            #            next_s = get_next_state(state, a)
+            #            if not next_s.is_outside_environment:
+            #                V[y][x] = reward + discount_rate * V[next_s.y][next_s.x]
+            #            delta = max(delta, abs(v - V[y][x]))
+            #print("Sweep #", sweep, ", delta:", delta)
+            #sweep += 1
+            #print_state_values()
 
-        step_size = 0.1
-        discount_rate = 0.9
+            step_size = 0.1
+            discount_rate = 0.9
 
-        if state.is_terminal_state():  # If we reach terminal state, stop
-            print("Terminal state reached")
-            break
+            if state.is_terminal_state():  # If we reach terminal state, stop
+                print("Terminal state reached")
+                break
 
-        a = get_next_action(state)
-        reward = get_reward(state, a)
+            a = get_next_action(state)
+            reward = get_reward(state, a)
 
-        next_s = get_next_state(state, a)
-        if (next_s == state):
-            print("(", state.row, ",", state.colum, ")"", Reward:", reward, "(Bump)")
-        else:
-            print("(", state.row, ",", state.colum, ")"", Reward:", reward)
+            reward_for_each_episode[index] = reward_for_each_episode[index] + reward
 
-        if not next_s.is_outside_environment:
-            Q_matrix[state.row][state.colum][a] = Q_matrix[state.row][state.colum][a] + \
-                                            step_size*(reward + (discount_rate*max(Q_matrix[next_s.row][next_s.colum]))
-                                                       - Q_matrix[state.row][state.colum][a])    # Update Q(S,A)
-        state = next_s
+            next_s = get_next_state(state, a)
+            if (next_s == state):
+                print("(", state.row, ",", state.colum, ")"", Reward:", reward, "(Bump)")
+            else:
+                print("(", state.row, ",", state.colum, ")"", Reward:", reward)
+
+            if not next_s.is_outside_environment:
+                Q_matrix[state.row][state.colum][a] = Q_matrix[state.row][state.colum][a] + \
+                                                step_size*(reward + (discount_rate*max(Q_matrix[next_s.row][next_s.colum]))
+                                                           - Q_matrix[state.row][state.colum][a])    # Update Q(S,A)
+            state = next_s
 
 
-    print_Q_values() # Maybe print at each step????!?!??
+        print_Q_values() # Maybe print at each step????!?!??
+
+    index += 1
+
+##################################
+plt.plot([x for x in range(episode_amount)], reward_for_each_episode, 'bo', label='UCB')
+plt.title('Performance of Q-learning')
+plt.xlabel('Episode')
+plt.ylabel('Sum of rewards during episode')
+plt.legend()
+plt.show()
+####################################
