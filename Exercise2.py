@@ -24,9 +24,9 @@ RIGHT = 3
 
 # Environment -- spaces: agent can move, "+": reward, "-": punishment.
 
-environment = [[' ', ' ', ' ', ''],
-               [' ', '#', ' ', '-'],
-               [' ', ' ', ' ', '+']]
+environment = [[' ', ' ', ' ', ' '],
+               ['+', '#', ' ', '-'],
+               [' ', ' ', ' ', ' ']]
 
 Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMS)] for y in range(ROWS)]
 
@@ -144,10 +144,10 @@ print_environment()
 
 
 episode_amount = 170
-state = State(0, 2, False)
+state = State(2, 0, False)
 # Start of estimation loop
 for i in range(episode_amount):
-    state = State(0, 2, False)
+    state = State(2, 0, False)
     while True:
         delta = 0
 
