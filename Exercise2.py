@@ -3,18 +3,16 @@ import math
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-## Basic implementation of iterative policy evaluation (see p. 75 in Sutton
- # and Barto (2018) "Reinformcement Learning, an Introduction") for a deterministic
- # 2D lattice environment.
- #
- # Note: works only for determinsitic policies as the "GetAction()" function
- # returns only a single action. It is, however, straightforward to
- # extend.
- #
+
+# Environment -- spaces: agent can move, "+": reward, "-": punishment.
+import switch as switch
+
+main_environment = [[' ', ' ', ' ', ' '],
+                    ['+', '#', ' ', '-'],
+                    [' ', ' ', ' ', ' ']]
 
 #Dimensions of the environment
-
-COLUMS = 4
+COLUMNS = 4
 ROWS = 3
 
 # Actions
@@ -22,38 +20,34 @@ UP = 0
 DOWN = 1
 LEFT = 2
 RIGHT = 3
-
-# Environment -- spaces: agent can move, "+": reward, "-": punishment.
-
-main_environment = [[' ', ' ', ' ', ' '],
-                    ['+', '#', ' ', '-'],
-                    [' ', ' ', ' ', ' ']]
-
-Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMS)] for y in range(ROWS)]
-
-
-# Parameters
+# Algorithm parameters
+Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMNS)] for y in range(ROWS)]
+action_selected_matrix = [[0 for x in range(COLUMNS)] for y in range(ROWS)]
 step_size = 0.1  # Alpha
 discount_rate = 0.9  # Gamma
 epsilon = 0.1
+episode_amount = 300
+reward_for_each_episode = [0 for x in range(episode_amount)]
+index = 0
 
-
-class State():
-    def __init__(self, row, colum, is_outside_environment):
+class State:
+    def __init__(self, row, column, is_outside_environment):
         self.row = row
-        self.colum = colum
+        self.column = column
         self.is_outside_environment = is_outside_environment
 
     def is_terminal_state(self):
-        return self.colum == self.row == -1 and self.is_outside_environment
+        return self.column == self.row == -1 and self.is_outside_environment
 
 
+# Constant
 TERMINAL_STATE = State(-1, -1, True)
 
-# Get the next state given a current state s and an action a:
+
+# Get the next state given a current state s and an action a
 def get_next_state(s_param, action):
-    s = copy.deepcopy(s_param)
-    if environment[s.row][s.colum] == '+':
+    s = copy.deepcopy(s_param) # to avoid pointer copy
+    if environment[s.row][s.column] == '+':
         return TERMINAL_STATE
 
     if action == UP:
@@ -61,122 +55,121 @@ def get_next_state(s_param, action):
     elif action == DOWN:
         s.row += 1
     elif action == LEFT:
-        s.colum -= 1
+        s.column -= 1
     elif action == RIGHT:
-        s.colum += 1
+        s.column += 1
 
-    if s.colum < 0 or s.row < 0 or s.colum >= COLUMS or s.row >= ROWS or environment[s.row][s.colum] == '#':
+    if s.column < 0 or s.row < 0 or s.column >= COLUMNS or s.row >= ROWS or environment[s.row][s.column] == '#':
         return s_param
 
     s.is_outside_environment = False
     return s
 
 
-# Get the reward given a state and an action:
+# Get the reward given a state and an action
 def get_reward(s, action):
-
     next_state = get_next_state(s, action)
     if next_state.is_outside_environment:
         return 0
     else:
-        if environment[next_state.row][next_state.colum] == '+':
+        if environment[next_state.row][next_state.column] == '+':
             return 1.0
-        if environment[next_state.row][next_state.colum] == '$':
+        if environment[next_state.row][next_state.column] == '$':
             return 0.2
-        if environment[next_state.row][next_state.colum] == '-':
+        if environment[next_state.row][next_state.column] == '-':
             return -1.0
         else:
             return 0
 
 
-# OLD DESCRIPTION: Get the next action according to the current policy:
 # NEW: Computes the estimates of surrounding states to find the best action to return with probability 1-epsilon, or
 # choose a random action with probability epsilon
 def get_next_action(s):
-    seed = 42
-    #random.seed(seed)
-
-    possible_actions = [UP, DOWN, LEFT, RIGHT]
-    max_val = -math.inf
-    best_action = RIGHT
     probability = random.random()
-
     if probability < epsilon:
         action = random.randint(0, 3)  # Choose an action at random
         return action
     else:                              # Otherwise, greedily choose best action based on estimated reward of surrounding states
-        #for action in possible_actions:
-        #    next_state = get_next_state(s, action)
-        #    reward = get_reward(s, action)
-        #    if not next_state.is_outside_environment:
-        #        if V[next_state.y][next_state.x] + reward > max_val:
-        #            max_val = V[next_state.y][next_state.x] + reward
-        #            best_action = action
-        #return best_action
-        return np.argmax(Q_matrix[s.row][s.colum])
+        return np.argmax(Q_matrix[s.row][s.column])
 
 
 # Print the environment with border around:
 def print_environment():
     for y in range(-1, ROWS+1):
-        for x in range(-1, COLUMS+1):
-            if y < 0 or y >= ROWS or x < 0 or x >= COLUMS:
-                print("#", end='')
+        for x in range(-1, COLUMNS + 1):
+            if y < 0 or y >= ROWS or x < 0 or x >= COLUMNS:
+                print("#", end=' ')
             else:
-                print(main_environment[y][x], end='')
+                print(main_environment[y][x], end=' ')
         print("")
 
 
 # Print the current estimate of state values:
 def print_Q_values():
-    for y in range(0, ROWS):
-        for x in range(0, COLUMS):
+    for row in range(0, ROWS):
+        for column in range(0, COLUMNS):
             print("[", end = ' ')
-            for action_value in Q_matrix[y][x]:
+            for action_value in Q_matrix[row][column]:
                 print("%5.2f" %action_value, end=' ')
             print("]", end = ' ')
+        print("")
+    print("")
+
+# Print the action chose for each state
+def print_action_matrix():
+    for row in range(0, ROWS):
+        for column in range(0, COLUMNS):
+            act = action_selected_matrix[row][column]
+            if act == 0:
+                print("↑", end=' ')
+                #print("UP   ", end=' ')
+            elif act == 1:
+                print("↓ ", end=' ')
+                #print("DOWN ", end=' ')
+            elif act == 2:
+                print("←-", end=' ')
+                #print("LEFT ", end=' ')
+            elif act == 3:
+                print("-→", end=' ')
+                #print("RIGHT", end=' ')
         print("")
     print("")
 
 
 print("Environment:")
 print_environment()
+start_state = State(2, 0, False)
 
-
-episode_amount = 50
-reward_for_each_episode = [0 for x in range(episode_amount)]
-index = 0
-state = State(2, 0, False)
 # Start of estimation loop
 for j in range(episode_amount):
     environment = main_environment
     for i in range(j):
-        state = State(2, 0, False)
+        start_state = State(2, 0, False)
         while True:
 
-            if state.is_terminal_state():  # If we reach terminal state, stop
+            if start_state.is_terminal_state():  # If we reach terminal state, stop
                 print("Terminal state reached")
                 break
 
-            a = get_next_action(state)
-            reward = get_reward(state, a)
-
+            a = get_next_action(start_state)
+            reward = get_reward(start_state, a)
+            next_s = get_next_state(start_state, a)
             reward_for_each_episode[index] = reward_for_each_episode[index] + reward
 
-            next_s = get_next_state(state, a)
-            if (next_s != state):
-                print("Move from (", state.row, ",", state.colum, ") to (", next_s.row, ",", next_s.colum, "), Reward:", reward)
+            if next_s != start_state:
+                print("Move from (", start_state.row, ",", start_state.column, ") to (", next_s.row, ",", next_s.column, ") with this reward:", reward)
 
             if not next_s.is_outside_environment:
-                Q_matrix[state.row][state.colum][a] = Q_matrix[state.row][state.colum][a] + \
-                                                step_size*(reward + (discount_rate*max(Q_matrix[next_s.row][next_s.colum]))
-                                                           - Q_matrix[state.row][state.colum][a])    # Update Q(S,A)
-            state = next_s
+                action_selected_matrix[start_state.row][start_state.column] = a
+                Q_matrix[start_state.row][start_state.column][a] = Q_matrix[start_state.row][start_state.column][a] + \
+                                                                  step_size * (reward + (discount_rate*max(Q_matrix[next_s.row][next_s.column]))
+                                                                               - Q_matrix[start_state.row][start_state.column][a])    # Update Q(S,A)
+            start_state = next_s
 
-        print_Q_values() # Maybe print at each step????!?!??
+        print_Q_values()
+        print_action_matrix()
 
     reward_for_each_episode[index] = reward_for_each_episode[index] / (index+1)
-
     index += 1
 
 ##################################

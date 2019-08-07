@@ -1,3 +1,5 @@
 Q - learning
 - Take away little cake after it has been eaten make environment not a Markov one
 - epsilon = 0 --> no random --> smooth curve
+- Try to make a move in a non deterministic way (say "go to left" but the robot, with % 
+  of probability goes in another direction)
