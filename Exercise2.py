@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 # Environment -- spaces: agent can move, "+": reward, "-": punishment.
 import switch as switch
 
-main_environment = [[' ', ' ', ' ', ' '],
-                    ['+', '#', ' ', '-'],
+main_environment = [[' ', ' ', ' ', '+'],
+                    [' ', '#', ' ', '-'],
                     [' ', ' ', ' ', ' ']]
 
 #Dimensions of the environment
@@ -23,10 +23,10 @@ RIGHT = 3
 # Algorithm parameters
 Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMNS)] for y in range(ROWS)]
 action_selected_matrix = [[0 for x in range(COLUMNS)] for y in range(ROWS)]
-step_size = 0.1  # Alpha
+step_size = 0.15  # Alpha
 discount_rate = 0.9  # Gamma
-epsilon = 0.1
-episode_amount = 300
+epsilon = 0.15
+episode_amount = 50
 reward_for_each_episode = [0 for x in range(episode_amount)]
 index = 0
 
@@ -121,24 +121,24 @@ def print_action_matrix():
         for column in range(0, COLUMNS):
             act = action_selected_matrix[row][column]
             if act == 0:
-                print("↑", end=' ')
-                #print("UP   ", end=' ')
+                print(" ↑", end=' ')
+                # print("UP   ", end=' ')
             elif act == 1:
-                print("↓ ", end=' ')
-                #print("DOWN ", end=' ')
+                print(" ↓", end=' ')
+                # print("DOWN ", end=' ')
             elif act == 2:
                 print("←-", end=' ')
-                #print("LEFT ", end=' ')
+                # print("LEFT ", end=' ')
             elif act == 3:
                 print("-→", end=' ')
-                #print("RIGHT", end=' ')
+                # print("RIGHT", end=' ')
         print("")
     print("")
 
 
 print("Environment:")
 print_environment()
-start_state = State(2, 0, False)
+start_state = State(0, 0, False)
 
 # Start of estimation loop
 for j in range(episode_amount):
