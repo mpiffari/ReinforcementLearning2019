@@ -57,7 +57,7 @@ theta = 0.01
 # Get the next state given a current state s and an action a:
 def get_next_state(s_param, action):
     s = copy.deepcopy(s_param)
-    if environment[s.y][s.x] != '+':
+    if environment[s.y][s.x] == '+':
         return TERMINAL_STATE
 
     if action == UP:
@@ -184,6 +184,7 @@ for i in range(episode_amount):
 
         a = get_next_action(state)
         reward = get_reward(state, a)
+        print(reward)
         next_s = get_next_state(state, a)
 
         if not next_s.is_outside_environment:
