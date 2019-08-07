@@ -36,40 +36,37 @@ V = [[0.0 for x in range(COLUMS)] for y in range(ROWS)]
 
 
 class State():
-    def __init__(self, y, x, is_outside_environment):
-        self.x = x
-        self.y = y
+    def __init__(self, row, colum, is_outside_environment):
+        self.row = row
+        self.colum = colum
         self.is_outside_environment = is_outside_environment
 
     def is_terminal_state(self):
-        return self.x == self.y == -1 and self.is_outside_environment
+        return self.colum == self.row == -1 and self.is_outside_environment
 
 
-
-TERMINAL_STATE = State(-1, -1, True)
-
-discount_rate = 0.9
 
 # Theta: the threshold for determining the accuracy of the estimation
 theta = 0.01
-
+TERMINAL_STATE = State(-1, -1, True)
+discount_rate = 0.9
 
 # Get the next state given a current state s and an action a:
 def get_next_state(s_param, action):
     s = copy.deepcopy(s_param)
-    if environment[s.y][s.x] == '+':
+    if environment[s.row][s.colum] == '+':
         return TERMINAL_STATE
 
     if action == UP:
-        s.y -= 1
+        s.row -= 1
     elif action == DOWN:
-        s.y += 1
+        s.row += 1
     elif action == LEFT:
-        s.x -= 1
+        s.colum -= 1
     elif action == RIGHT:
-        s.x += 1
+        s.colum += 1
 
-    if s.x < 0 or s.y < 0 or s.x >= COLUMS or s.y >= ROWS or environment[s.y][s.x] == '#':
+    if s.colum < 0 or s.row < 0 or s.colum >= COLUMS or s.row >= ROWS or environment[s.row][s.colum] == '#':
         return s_param
 
     s.is_outside_environment = False
@@ -83,9 +80,9 @@ def get_reward(s, action):
     if next_state.is_outside_environment:
         return 0
     else:
-        if environment[next_state.y][next_state.x] == '+':
+        if environment[next_state.row][next_state.colum] == '+':
             return 1.0
-        if environment[next_state.y][next_state.x] == '-':
+        if environment[next_state.row][next_state.colum] == '-':
             return -1.0
         else:
             return 0
@@ -116,11 +113,7 @@ def get_next_action(s):
         #            max_val = V[next_state.y][next_state.x] + reward
         #            best_action = action
         #return best_action
-        return np.argmax(Q_matrix[s.y][s.x])
-
-
-
-
+        return np.argmax(Q_matrix[s.row][s.colum])
 
 
 # Print the environment with border around:
@@ -189,14 +182,14 @@ for i in range(episode_amount):
 
         next_s = get_next_state(state, a)
         if (next_s == state):
-            print("(", state.y, ",", state.x, ")"", Reward:", reward, "(Bump)")
+            print("(", state.row, ",", state.colum, ")"", Reward:", reward, "(Bump)")
         else:
-            print("(", state.y, ",", state.x, ")"", Reward:", reward)
+            print("(", state.row, ",", state.colum, ")"", Reward:", reward)
 
         if not next_s.is_outside_environment:
-            Q_matrix[state.y][state.x][a] = Q_matrix[state.y][state.x][a] + \
-                                            step_size*(reward + (discount_rate*max(Q_matrix[next_s.y][next_s.x]))
-                                                       - Q_matrix[state.y][state.x][a])    # Update Q(S,A)
+            Q_matrix[state.row][state.colum][a] = Q_matrix[state.row][state.colum][a] + \
+                                            step_size*(reward + (discount_rate*max(Q_matrix[next_s.row][next_s.colum]))
+                                                       - Q_matrix[state.row][state.colum][a])    # Update Q(S,A)
         state = next_s
 
 
