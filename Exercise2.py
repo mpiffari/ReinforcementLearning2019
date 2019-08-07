@@ -7,13 +7,15 @@ import matplotlib.pyplot as plt
 # Environment -- spaces: agent can move, "+": reward, "-": punishment.
 import switch as switch
 
-main_environment = [[' ', ' ', ' ', '+'],
-                    [' ', '#', ' ', '-'],
-                    [' ', ' ', ' ', ' ']]
+main_environment = [[' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', '-'],
+                    [' ', '#', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' '],
+                    [' ', '#', '+', ' ', ' ']]
 
 #Dimensions of the environment
-COLUMNS = 4
-ROWS = 3
+COLUMNS = 5
+ROWS = 4
 
 # Actions
 UP = 0
@@ -138,7 +140,7 @@ def print_action_matrix():
 
 print("Environment:")
 print_environment()
-start_state = State(0, 0, False)
+start_state = State(4, 0, False)
 
 # Start of estimation loop
 for j in range(episode_amount):
