@@ -1,0 +1,3 @@
+Q - learning
+- Take away little cake after it has been eaten make environment not a Markov one
+- epsilon = 0 --> no random --> smooth curve
