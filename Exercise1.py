@@ -4,9 +4,9 @@ import random
 import statistics
 from math import *
 
-master_seed = 42
+master_seed = 420
 half_interval_length = 4
-bandit_amount = 10
+bandit_amount = 1000
 arm_pulls = 1000
 min_interval = 0
 max_interval = 5
@@ -17,7 +17,7 @@ class Bandit():
         self.mean = mean
     def pull(self):
         return random.randint(self.mean-half_interval_length, self.mean+half_interval_length)
-#random.seed(master_seed)
+random.seed(master_seed)
 
 
 
@@ -37,7 +37,7 @@ def epsilon_greedy(epsilon):
         action = random.random()
         if action < epsilon:                        #With prob. epsilon: explore
             index = random.randint(0,bandit_amount-1)
-        else:                                       #With prob. epsilon: exploit
+        else:                                       #With prob. 1-epsilon: exploit
             index = np.argmax(Q)
         chosen_bandit = bandit_list[index]
         reward = chosen_bandit.pull()
@@ -368,4 +368,5 @@ def compare_algorithms():
     plt.show()
 ###################################################################
 compare_algorithms()
+#test_epsilon_greedy()
 #plt.show()
