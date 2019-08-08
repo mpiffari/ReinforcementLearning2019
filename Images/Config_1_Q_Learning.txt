@@ -24,6 +24,7 @@ Terminal state reached
  ?  ?  ? ?- ?- 
  ?  ?  ? ?-  ? 
 
+
 Env 
 main_environment = [[' ', ' ', ' ', ' ', ' '],
                     [' ', '#', ' ', ' ', '-'],
