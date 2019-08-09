@@ -4,7 +4,7 @@ import random
 
 start_data = np.array([[1, 0, 1],
                        [0, 1, 1],
-                       [1, 1, 1],
+                       [1, 1, 0],
                        [0, 0, 0]])
 training_set = []
 
@@ -18,9 +18,7 @@ def run_single_perceptron():
 
     learning_rate = 0.2
 
-
     def calc_weights(weights, input, output, correct_output):
-        #return weights + learning_rate*output*(1- output)*(correct_output-output)*input  # sigmoid
         return weights + (0.5*learning_rate*(correct_output-output)*input)
 
     epochs = 1000
@@ -32,8 +30,7 @@ def run_single_perceptron():
             avg_error = 0
             for i in range(len(training_set)):
                 u = np.append(training_set[i][:2], -1)
-                z = (w[0]*u[0]) + (w[1]*u[1]) + (w[2]*u[2])
-                #v = 1 / (1+(math.e**(-z)))
+                z = np.matmul(w, u)
                 if z <= 0:
                     v = 0
                 else:
@@ -82,8 +79,8 @@ def run_mlp():
                 u = np.append(training_set[i][:2], -1)
                 x_1 = w_hidden[0]
                 x_2 = w_hidden[1]
-                z_1 = (x_1[0] * u[0]) + (x_1[1] * u[1]) + (x_1[2] * u[2])
-                z_2 = (x_2[0] * u[0]) + (x_2[1] * u[1]) + (x_2[2] * u[2])
+                z_1 = np.matmul(x_1, u)
+                z_2 = np.matmul(x_2, u)
                 x_1_output = (1 / (1+(math.e**(-z_1))))
                 x_2_output = (1 / (1+(math.e**(-z_2))))
                 z = (w_output[0] * x_1_output) + (w_output[1] * x_2_output) + (w_output[2] * -1)
@@ -135,8 +132,8 @@ def testweights_mlp():
         u = np.append(training_set[i][:2], -1)
         x_1 = w_hidden[0]
         x_2 = w_hidden[1]
-        z_1 = (x_1[0] * u[0]) + (x_1[1] * u[1]) + (x_1[2] * u[2])
-        z_2 = (x_2[0] * u[0]) + (x_2[1] * u[1]) + (x_2[2] * u[2])
+        z_1 = np.matmul(x_1, u)
+        z_2 = np.matmul(x_2, u)
         x_1_output = 1 / (1 + (math.e ** (-z_1)))
         x_2_output = 1 / (1 + (math.e ** (-z_2)))
         z = (w_output[0] * x_1_output) + (w_output[1] * x_2_output) + (w_output[2] * -1)
@@ -158,8 +155,7 @@ def testweights_single_perceptron(linenum):
     np.random.shuffle(training_set)
     for i in range(10):
         u = np.append(training_set[i][:2], -1)
-        z = (w[0] * u[0]) + (w[1] * u[1]) + (w[2] * u[2])
-        #v = 1 / (1 + (math.e ** (-z)))
+        z = np.matmul(w, u)
         if z <= 0:
             v = 0
         else:
@@ -167,7 +163,7 @@ def testweights_single_perceptron(linenum):
         print("Input:", u, " Output:", v)
 
 
-run_mlp()
+#run_mlp()
 #testweights_mlp()
 #testweights_single_perceptron(0)
 #run_single_perceptron()
