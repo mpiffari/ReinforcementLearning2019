@@ -1,3 +1,5 @@
+# Written by Marcel Meimbresse (2019)
+
 import math
 import numpy as np
 import random
