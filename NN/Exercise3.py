@@ -8,7 +8,7 @@ start_data = np.array([[1, 0, 1],
                        [0, 0, 0]])
 training_set = []
 
-for i in range(100):
+for i in range(1000):
     training_set.append(start_data[np.random.randint(0, len(start_data))])
 
 print(training_set)
@@ -21,7 +21,7 @@ def run_single_perceptron():
     def calc_weights(weights, input, output, correct_output):
         return weights + (0.5*learning_rate*(correct_output-output)*input)
 
-    epochs = 1000
+    epochs = 400
     success = False
     avg_error = math.inf
     for k in range(epochs):
@@ -51,14 +51,15 @@ def run_single_perceptron():
         f.write(np.array_str(w))
         f.close()
 
-
+# Ran for a long time (and mostly did not finish) with higher learning rate since it got stuck in a local minimum
+# Setting learning rate very low solved it. In general, learning rate should not be to higher value like 0.2-0.9
 def run_mlp():
     w_hidden = np.array([np.array([random.random(), random.random(), random.random()]),
                          np.array([random.random(), random.random(), random.random()])])
 
     w_output = np.array([random.random(), random.random(), random.random()])
 
-    learning_rate = 0.2
+    learning_rate = 0.01
 
     def calc_weights_output(weights, input, output, correct_output):
         return weights + (learning_rate * (correct_output - output) * input)
@@ -163,7 +164,7 @@ def testweights_single_perceptron(linenum):
         print("Input:", u, " Output:", v)
 
 
-#run_mlp()
+run_mlp()
 #testweights_mlp()
 #testweights_single_perceptron(0)
 #run_single_perceptron()
