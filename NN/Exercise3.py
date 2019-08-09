@@ -4,7 +4,7 @@ import random
 
 start_data = np.array([[1, 0, 1],
                        [0, 1, 1],
-                       [1, 1, 0],
+                       [1, 1, 1],
                        [0, 0, 0]])
 training_set = []
 
@@ -14,8 +14,6 @@ for i in range(100):
 print(training_set)
 
 def run_single_perceptron():
-    f = open("weights.txt", "w")
-
     w = np.array([random.random(), random.random(), random.random()])
 
     learning_rate = 0.2
@@ -26,10 +24,12 @@ def run_single_perceptron():
         return weights + (0.5*learning_rate*(correct_output-output)*input)
 
     epochs = 1000
-    error = math.inf
-    while error > 0.0001:
-        for k in range(epochs):
+    success = False
+    avg_error = math.inf
+    for k in range(epochs):
+        if avg_error > 0.0001:
             np.random.shuffle(training_set)
+            avg_error = 0
             for i in range(len(training_set)):
                 u = np.append(training_set[i][:2], -1)
                 z = (w[0]*u[0]) + (w[1]*u[1]) + (w[2]*u[2])
@@ -41,10 +41,18 @@ def run_single_perceptron():
                 t = training_set[i][2]
                 #error = 0.5*((t-v)**2)  # squared error
                 error = abs(t-v)
+                avg_error += error
                 w = calc_weights(w, u, v, t)
-
-    f.write(np.array_str(w))
-    f.close()
+            avg_error = avg_error/len(training_set)
+            print(avg_error)
+        else:
+            success = True
+            print("Error threshold reached")
+            break
+    if success:
+        f = open("single_weights.txt", "w")
+        f.write(np.array_str(w))
+        f.close()
 
 
 def run_mlp():
@@ -99,7 +107,7 @@ def run_mlp():
             print("Reached error threshold")
             break
     if success:
-        f = open("weights.txt", "w")
+        f = open("mlp_weights.txt", "w")
         f.write(np.array_str(w_hidden[0]))
         f.write("\n")
         f.write(np.array_str(w_hidden[1]))
@@ -109,7 +117,7 @@ def run_mlp():
 
 
 def testweights_mlp():
-    f = open("weights.txt", "r")
+    f = open("mlp_weights.txt", "r")
     lines = f.readlines()
     f.close()
     w_hidden = []
@@ -140,7 +148,7 @@ def testweights_mlp():
 
 
 def testweights_single_perceptron(linenum):
-    f = open("weights.txt", "r")
+    f = open("single_weights.txt", "r")
     lines = f.readlines()
     f.close()
     line = lines[linenum]
@@ -148,7 +156,7 @@ def testweights_single_perceptron(linenum):
     line = line.replace("]", "")
     w = np.fromstring(line, dtype=float, sep=" ")
     np.random.shuffle(training_set)
-    for i in range(4):
+    for i in range(10):
         u = np.append(training_set[i][:2], -1)
         z = (w[0] * u[0]) + (w[1] * u[1]) + (w[2] * u[2])
         #v = 1 / (1 + (math.e ** (-z)))
@@ -162,4 +170,4 @@ def testweights_single_perceptron(linenum):
 run_mlp()
 #testweights_mlp()
 #testweights_single_perceptron(0)
-#run()
+#run_single_perceptron()
