@@ -69,7 +69,7 @@ while error > threshold_error
         t = matrix_input_output(:,end)';
         u = matrix_input_output(:, 1:end-1);
         
-        % For each possible  of the dataset
+        % For each possible data of the dataset
         for i = 1:row
             input_vector = u(i,:);
             correct_output = t(i);
