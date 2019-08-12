@@ -10,10 +10,10 @@ column = length(dataset(1,:));
 output = [0, 1, 1, 0]; % Output valu(v: it's known cause it's a supervised learning problem)
 %% Parameters and variables
 v = 0; % Output of the binary classification
-learning_rate = 0.2; % Higher it is, more swinging will be the convergence
-epochs = 600;
+learning_rate = 0.3; % Higher it is, more swinging will be the convergence
+epochs = 50;
 threshold_error = 0.001;
-activationFunction = ActivationFunction.Sigmoid;
+activationFunction = ActivationFunction.TLU;
 error = zeros(1,epochs);
 error = error + inf;
 
@@ -124,15 +124,14 @@ w1_2= w_in_hid(2,1);
 w2_2= w_in_hid(2,2);
 wbias_2= w_in_hid(2,3);
 
-x = linspace(-0.5,1.5, 1000); % Adapt n for resolution of graph
+x = linspace(2,10, 1000); % Adapt n for resolution of graph
 y_1 = -(w1_1/w2_1)*x -(bias*wbias_1)/w2_1;
 y_2 = -(w1_2/w2_2)*x -(bias*wbias_2)/w2_2;
 figure();
+
 plot(x,y_1);
 hold on
 plot(x,y_2);
-% ylim([-0.5 1.5]);
-% xlim([-0.5 1.5]);
 scatter(dataset(:,1),dataset(:,2),'filled');
 xlabel('Gate A');
 ylabel('Gate B');

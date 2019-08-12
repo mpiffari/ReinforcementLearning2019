@@ -10,8 +10,8 @@ maximumAcceleration = 10;
 stepDiscreteAcceleration = 0.01;
 actionSpace = -maximumAcceleration : stepDiscreteAcceleration : maximumAcceleration;
 
-h = 15; % Max height of the mountain [m]
-L = 40; % Length of the valley
+h = 1; % Max height of the mountain [m]
+L = 4; % Length of the valley
 m = 1; % [kg]
 noise = 0;
 
@@ -25,7 +25,7 @@ after = 2;
 position = [0, L / 2];
 velocity = [0 , 0];
 
-epsilon = 0;
+epsilon = 0.3;
 
 fig0 = figure;
 %% Algorithm
@@ -36,9 +36,9 @@ for t = t_i : dt : t_f
     rng(seed);
     action = rand();
     if action < epsilon
-        a_t = -10 + (10+10)*rand();
+        a_t = -1 + (1+1)*rand();
     else
-        a_t = 10;
+        a_t = 1;
     end
     
     %% Matrix calculation

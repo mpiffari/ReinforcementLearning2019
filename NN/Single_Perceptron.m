@@ -3,7 +3,7 @@ clear variables
 clc
 load fisheriris
 
-%% Manipulate and plot data
+%% Iris dataset
 irisDataSet = meas(:,1:2); % Only two features
 % Keep only two species linearly separable
 irisDataSet(100:end,:) = [];
@@ -29,30 +29,30 @@ output = label;
 gscatter(irisDataSet(:,1),irisDataSet(:,2),species,'rgb','osd');
 xlabel('Sepal length');
 ylabel('Sepal width');
-%% Normal code
+%% AND
 %bias = -1; % Fixed value setted permanently to -1
 %dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)
 %row = length(dataset);
 %column = length(dataset(1,:));
-%% AND
 %output = [0, 0, 0, 1]; % Output valu(v: it's known cause it's a supervised learning problem)
 
 %% OR
+%bias = -1; % Fixed value setted permanently to -1
+%dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)
+%row = length(dataset);
+%column = length(dataset(1,:));
 %output = [0, 1, 1, 1]; % Output value
 
 %% Parameters and variables
 v = 0; % Output of the binary classification
 learning_rate = 0.3; % Higher it is, more swinging will be the convergence
 w = -1 + (1+1)*rand(1,column); % Random initialization of the weights with value [-1,+1]
-epochs = 3000;
-threshold_error = 0.001;
+epochs = 50;
+threshold_error = 0.01;
 activationFunction = ActivationFunction.TLU;
 error = zeros(1,epochs);
 error = error + inf;
-fig0 = figure;
 fig1 = figure;
-fig2 = figure;
-
 %% Algorithm
 while error > threshold_error
     for epoch = 1:epochs
@@ -92,39 +92,40 @@ while error > threshold_error
                
             disp(error(1,epoch));
             % Dynamic plot
-%             w1= w(1);
-%             w2= w(2);
-%             wbias= w(3);
-%             
-%             x = linspace(2,10, 1000); % Adapt n for resolution of graph
-%             y = -(w1/w2)*x -(bias*wbias)/w2;
-%  
-%             figure(fig1);
-%             clf(fig1)
-%             hold on
-%             plot(x,y);
-%             ylim([-10 10])
-%             hold on
-%             scatter(input_vector(1), input_vector(2), 'filled')
+            w1= w(1);
+            w2= w(2);
+            wbias= w(3);
+            
+            x = linspace(2,10, 1000); % Adapt n for resolution of graph
+            y = -(w1/w2)*x -(bias*wbias)/w2;
+ 
+            figure(fig1);
+            clf(fig1)
+            hold on
+            plot(x,y);
+            ylim([-10 10])
+            hold on
+            scatter(input_vector(1), input_vector(2), 'filled')
         end
     end
 end
 
+clf(fig1)
+% Bound equation
 w1= w(1);
 w2= w(2);
 wbias= w(3);
-
 x = linspace(2,10, 1000); % Adapt n for resolution of graph
 y = -(w1/w2)*x -(bias*wbias)/w2;
-
 figure(fig1);
-hold on
 plot(x,y);
 hold on
 gscatter(irisDataSet(:,1),irisDataSet(:,2),species,'rgb','osd');
 xlabel('Sepal Length Cm');
 ylabel('SepalWidthCm');
+
 % Error
+fig2 = figure;
 figure(fig2)
 x = -0.5:1:epochs-1;
 scatter(x,error);
