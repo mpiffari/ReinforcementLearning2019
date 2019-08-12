@@ -4,38 +4,90 @@ clc
 
 %% Variables and parameters
 numberOfState = 2; % Position and velocity
-stateSpace = [0, 0]; 
+stateSpace = [0;0]; % Column vector
 
 maximumAcceleration = 10;
 stepDiscreteAcceleration = 0.01;
 actionSpace = -maximumAcceleration : stepDiscreteAcceleration : maximumAcceleration;
 
-h = 10; % Max height of the mountain [m]
-L = 100; % Length of the valley
+h = 15; % Max height of the mountain [m]
+L = 40; % Length of the valley
+m = 1; % [kg]
 noise = 0;
 
 %Time
 t_i = 0;
-dt = 0.01;
-t_f = 5;
+dt = 0.05;
+t_f = 50;
 
-now = 0;
-after = 1;
-position = [0 , 0];
+now = 1;
+after = 2;
+position = [0, L / 2];
 velocity = [0 , 0];
 
+epsilon = 0;
+
+fig0 = figure;
 %% Algorithm
 for t = t_i : dt : t_f
-    % Chose the action
-    a_t = 1;
+    % Chose the action by greedy way
+    time = clock;
+    seed = time(6);
+    rng(seed);
+    action = rand();
+    if action < epsilon
+        a_t = -10 + (10+10)*rand();
+    else
+        a_t = 10;
+    end
     
-    params = Parameters(position(now), h, m, L);
+    %% Matrix calculation
+    %     first_row = (1 / A) * ( B * velocity(now) + C);
+    %     second_row = a_t / D;
+    %     stateSpace = stateSpace + t * [first_row; second_row]
+    
+    %% Calculation with physic equation
+    position(now) = position(after);
+    velocity(now) = velocity(after);
+    x = position(now);
+    
+    params = Parameters(x, h, m, L);
     A = params(1);
     B = params(2);
     C = params(3);
     D = params(4);
     
-    position(after) = position(now) + (t / A) * ( B * velocity(now) + C);
-    velocity(after) = velocity(now) + t * a_t / D; 
-end
+    velocity(after) = velocity(now) + dt * (1/A)*((a_t/D) - C - B * velocity(now));
+    position(after) = x + dt * velocity(now);
+    if position(after) <= 0
+        position(after) = 0;
+        velocity(after) = 0;
+    elseif position(after) >= L
+        disp('####### YEEE ########');
+        break
+    end
     
+    
+    stateSpace(1,1) = position(after);
+    stateSpace(2,1) = velocity(after);
+    
+    %% Plot
+    figure(fig0);
+    clf(fig0)
+    hold on
+    
+    max = h;
+    min = -1;
+    x_mountains = min: 0.01 : L;
+    y_mountains = zeros(length(x_mountains),1);
+    for i = 1:length(x_mountains)
+        y_mountains(i,1) = Profile(x_mountains(i),L,h);
+    end
+    plot(x_mountains, y_mountains);
+    y_point = Profile(position(after),L,h);
+    y_target = max;
+    scatter(position(after), y_point, 'filled');
+    scatter(L, y_target, '*');
+    ylim([0 max+1]);
+    xlim([min L+1]);
+end
