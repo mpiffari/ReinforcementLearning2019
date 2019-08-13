@@ -54,7 +54,7 @@ def run_single_perceptron():
         f.close()
 
 # Ran for a long time (and mostly did not finish) with higher learning rate since it got stuck in a local minimum
-# Setting learning rate very low solved it. In general, learning rate should not be to higher value like 0.2-0.9
+# Setting learning rate very low solved it. In general, learning rate should not be set to higher value like 0.2-0.9
 def run_mlp():
     w_hidden = np.array([np.array([random.random(), random.random(), random.random()]),
                          np.array([random.random(), random.random(), random.random()])])
