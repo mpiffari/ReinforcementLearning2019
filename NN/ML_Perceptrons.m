@@ -8,25 +8,26 @@ dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)
 row = length(dataset);
 column = length(dataset(1,:));
 output = [0, 1, 1, 0]; % Output valu(v: it's known cause it's a supervised learning problem)
-
 %% Parameters and variables
 v = 0; % Output of the binary classification
-learning_rate = 0.3; % Higher it is, more swinging will be the convergence
+learning_rate = 0.1; % Higher it is, more swinging will be the convergence
 epochs = 3000;
 threshold_error = 0.001;
-activationFunction = ActivationFunction.TLU;
+activationFunction = ActivationFunction.Sigmoid;
 error = zeros(1,epochs);
 error = error + inf;
 
 % Design of the net
 number_of_input = 2 + 1; % Number of neurons in the input layer (+1 for bias) (u_i)
 number_of_hidden_layer = 1; % Number of hidden layers
-number_of_hidden_neuron = 2; % Number of neurons for each hidden layer x_j
+number_of_hidden_neuron = 2+1; % Number of neurons for each hidden layer x_j
 number_of_output = 1; % Number of neurons in the output layer (v_k)
 
 % Random initialization of the weights with value [-1,+1]
-w_in_hid = -1 + (1+1)*rand(number_of_hidden_neuron, number_of_input); % Weigths between input and hidden layer
-w_hid_out =  -1 + (1+1)*rand(number_of_output,number_of_hidden_neuron);
+% Row: hidden neuron - bias neuron, Column: input neuron
+w_in_hid = -1 + (1+1)*rand(number_of_hidden_neuron - 1, number_of_input); % Weigths between input and hidden layer
+% Row: output neuron, Column: hidden neuron
+w_hid_out =  -1 + (1+1)*rand(number_of_output, number_of_hidden_neuron);
 
 z_hidden = zeros(number_of_hidden_neuron, number_of_hidden_layer);
 output_hidden =  zeros(number_of_hidden_layer, 1);
@@ -59,7 +60,7 @@ while error > threshold_error
             % for i = 1:number_of_hidden_layer
             
             z_hidden = w_in_hid * input_vector';
-            for j = 1:number_of_hidden_neuron
+            for j = 1:number_of_hidden_neuron - 1 % minus one for the bias
                 switch activationFunction
                     case ActivationFunction.TLU
                         output_hidden_layer(j,1) = heaviside(z_hidden(j,1));
@@ -70,6 +71,7 @@ while error > threshold_error
                 end
             end
             
+            output_hidden_layer(number_of_hidden_neuron,1) = bias;
             z_output = w_hid_out * output_hidden_layer;
             
             switch activationFunction
@@ -89,26 +91,50 @@ while error > threshold_error
             
             % Back propagation
             % Made more generic (for more output neurons)
-            error = abs(correct_output - output_out_layer);
-            gradient_output = output_out_layer * (1 - output_out_layer) * error;
+            error(1,epoch)= correct_output - output_out_layer;
+            gradient_output = output_out_layer * (1 - output_out_layer) * error(1,epoch);
             gradient_hidden = zeros(number_of_hidden_neuron, 1);
             for j = 1:number_of_hidden_neuron
                 v = output_hidden_layer(j,1);
                 %iterate over each output nodes
-                gradient_output_coeff = gradient_output * w_hid_out(1,j);
+                gradient_output_coeff = gradient_output * w_hid_out(1, j);
                 gradient_hidden(j,1) = v * (1 - v) * gradient_output_coeff;
             end
             
             % Update weigths
             for k = 1:number_of_output
-                w_hid_out(1,k) = w_hid_out(1,k) + learning_rate * gradient_output * output_hidden_layer(k,1);
+                % For each row
+                w_hid_out(k,:) = w_hid_out(k, :) + learning_rate * gradient_output * output_hidden_layer(k,1);
             end
-            for k = 1:number_of_hidden_neuron
-                w_in_hid(:,k) = w_in_hid(:,k) +  learning_rate * gradient_hidden(k,1) * input_vector;
+            for k = 1:number_of_hidden_neuron - 1 % minus 1 for the bias
+                % For each row
+                w_in_hid(k,:) = w_in_hid(k,:) + learning_rate * gradient_hidden(k,1) * input_vector;
             end
-        end
-        
-        
-        
+        end       
     end
 end
+
+disp('############ END EPOCHS ###############');
+
+% Bound equation
+% Number of bound = number of nodes in the hidden layer
+w1_1= w_in_hid(1,1);
+w1_2= w_in_hid(1,2);
+wbias_1= w_in_hid(1,3);
+
+w2_1= w_in_hid(2,1);
+w2_2= w_in_hid(2,2);
+wbias_2= w_in_hid(2,3);
+
+x = linspace(-0.5,1.5, 1000); % Adapt n for resolution of graph
+y_1 = -(w1_1/w1_2)*x -(bias * wbias_1)/w1_2;
+y_2 = -(w2_1/w2_2)*x -(bias * wbias_2)/w2_2;
+figure();
+plot(x,y_1);
+hold on
+plot(x,y_2);
+ylim([-0.5 1.5]);
+xlim([-0.5 1.5]);
+scatter(dataset(:,1),dataset(:,2),'filled');
+xlabel('Gate A');
+ylabel('Gate B');
