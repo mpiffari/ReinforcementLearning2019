@@ -6,14 +6,15 @@ clc
 numberOfState = 2; % Position and velocity
 stateSpace = [0;0]; % Column vector
 
-maximumAcceleration = 10;
+maximumAcceleration = 1;
 stepDiscreteAcceleration = 0.01;
 actionSpace = -maximumAcceleration : stepDiscreteAcceleration : maximumAcceleration;
 
+% System physic parameters
 h = 1; % Max height of the mountain [m]
 L = 4; % Length of the valley
 m = 1; % [kg]
-noise = 0;
+g = 9.80665; % Gravity acceleration [m/s^2]
 
 %Time
 t_i = 0;
@@ -23,7 +24,7 @@ t_f = 50;
 now = 1;
 after = 2;
 position = [0, L/2];
-velocity = [0 , 0];
+velocity = [0 , 0.9];
 
 epsilon = 0.3;
 

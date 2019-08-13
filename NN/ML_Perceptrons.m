@@ -2,6 +2,9 @@ close all
 clear variables
 clc
 
+time = clock;
+seed = time(6);
+rng(seed);
 %% XOR
 bias = -1; % Fixed value setted permanently to -1
 dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)

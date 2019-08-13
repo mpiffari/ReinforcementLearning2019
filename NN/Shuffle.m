@@ -1,7 +1,9 @@
  function mat_shuffled = Shuffle(mat, row, column)
-     time = clock;
-     seed = time(6);
-     rng(seed);
+% Initi seed only one time to recreate always the same error and figure out
+% the problem
+%      time = clock;
+%      seed = time(6);
+%      rng(seed);
      indexes = randi(row,row,1)';
      mat_shuffled = zeros(row,(column+1));
      for i = 1:row
