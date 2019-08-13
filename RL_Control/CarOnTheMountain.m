@@ -57,7 +57,7 @@ for t = t_i : dt : t_f
     C = params(3);
     D = params(4);
     
-    velocity(after) = velocity(now) + dt * (1/A)*((a_t/D) - C - B * velocity(now));
+    velocity(after) = velocity(now) + dt * (1/A)*(m * (a_t/D) - C - B * (velocity(now))^2);
     position(after) = x + dt * velocity(now);
     if position(after) <= 0
         position(after) = 0;

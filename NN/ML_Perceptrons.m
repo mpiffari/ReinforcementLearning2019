@@ -10,8 +10,8 @@ column = length(dataset(1,:));
 output = [0, 1, 1, 0]; % Output valu(v: it's known cause it's a supervised learning problem)
 %% Parameters and variables
 v = 0; % Output of the binary classification
-learning_rate = 0.2; % Higher it is, more swinging will be the convergence
-epochs = 600;
+learning_rate = 0.1; % Higher it is, more swinging will be the convergence
+epochs = 3000;
 threshold_error = 0.001;
 activationFunction = ActivationFunction.Sigmoid;
 error = zeros(1,epochs);
@@ -71,6 +71,7 @@ while error > threshold_error
                 end
             end
             
+            output_hidden_layer(number_of_hidden_neuron,1) = bias;
             z_output = w_hid_out * output_hidden_layer;
             
             switch activationFunction
@@ -90,8 +91,8 @@ while error > threshold_error
             
             % Back propagation
             % Made more generic (for more output neurons)
-            error = abs(correct_output - output_out_layer);
-            gradient_output = output_out_layer * (1 - output_out_layer) * error;
+            error(1,epoch)= correct_output - output_out_layer;
+            gradient_output = output_out_layer * (1 - output_out_layer) * error(1,epoch);
             gradient_hidden = zeros(number_of_hidden_neuron, 1);
             for j = 1:number_of_hidden_neuron
                 v = output_hidden_layer(j,1);
@@ -112,27 +113,28 @@ while error > threshold_error
         end       
     end
 end
+
 disp('############ END EPOCHS ###############');
 
 % Bound equation
 % Number of bound = number of nodes in the hidden layer
 w1_1= w_in_hid(1,1);
-w2_1= w_in_hid(1,2);
+w1_2= w_in_hid(1,2);
 wbias_1= w_in_hid(1,3);
 
-w1_2= w_in_hid(2,1);
+w2_1= w_in_hid(2,1);
 w2_2= w_in_hid(2,2);
 wbias_2= w_in_hid(2,3);
 
 x = linspace(-0.5,1.5, 1000); % Adapt n for resolution of graph
-y_1 = -(w1_1/w2_1)*x -(bias*wbias_1)/w2_1;
-y_2 = -(w1_2/w2_2)*x -(bias*wbias_2)/w2_2;
+y_1 = -(w1_1/w1_2)*x -(bias * wbias_1)/w1_2;
+y_2 = -(w2_1/w2_2)*x -(bias * wbias_2)/w2_2;
 figure();
 plot(x,y_1);
 hold on
 plot(x,y_2);
-% ylim([-0.5 1.5]);
-% xlim([-0.5 1.5]);
+ylim([-0.5 1.5]);
+xlim([-0.5 1.5]);
 scatter(dataset(:,1),dataset(:,2),'filled');
 xlabel('Gate A');
 ylabel('Gate B');
