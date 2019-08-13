@@ -22,7 +22,7 @@ t_f = 50;
 
 now = 1;
 after = 2;
-position = [0, L / 2];
+position = [0, L/2];
 velocity = [0 , 0];
 
 epsilon = 0.3;
@@ -59,7 +59,7 @@ for t = t_i : dt : t_f
     
     velocity(after) = velocity(now) + dt * (1/A)*(m * (a_t/D) - C - B * (velocity(now))^2);
     position(after) = x + dt * velocity(now);
-    if position(after) <= 0
+    if position(after) < 0
         position(after) = 0;
         velocity(after) = 0;
     elseif position(after) >= L
