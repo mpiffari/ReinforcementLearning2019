@@ -7,15 +7,15 @@ bias = -1; % Fixed value setted permanently to -1
 dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)
 row = length(dataset);
 column = length(dataset(1,:));
-output = [0, 1, 1, 0]; % Output valu(v: it's known cause it's a supervised learning problem)
+output = [0, 1, 1, 0]; % Output value(v: it's known cause it's a supervised learning problem)
 %% Parameters and variables
-v = 0; % Output of the binary classification
-learning_rate = 0.1; % Higher it is, more swinging will be the convergence
-epochs = 3000;
-threshold_error = 0.001;
+learning_rate = 0.3; % Higher it is, more swinging will be the convergence
+epochs = 3500;
+threshold_error = 0.00001;
 activationFunction = ActivationFunction.Sigmoid;
-error = zeros(1,epochs);
-error = error + inf;
+errors = zeros(1,epochs);
+errors = errors + inf;
+error = inf;
 
 % Design of the net
 number_of_input = 2 + 1; % Number of neurons in the input layer (+1 for bias) (u_i)
@@ -47,8 +47,8 @@ while error > threshold_error
         t = matrix_input_output(:,end)';
         u = matrix_input_output(:, 1:end-1);
               
-        % For each input
-        for i = 1:number_of_input
+        % For each input of the dataset
+        for i = 1:row
             output_hidden_layer = zeros(number_of_hidden_neuron, 1);
             input_vector = u(i,:);
             correct_output = t(i);
@@ -91,14 +91,15 @@ while error > threshold_error
             
             % Back propagation
             % Made more generic (for more output neurons)
-            error(1,epoch)= correct_output - output_out_layer;
-            gradient_output = output_out_layer * (1 - output_out_layer) * error(1,epoch);
+            error = abs(correct_output - output_out_layer);
+            errors(1,epoch)= error;
+            gradient_output = output_out_layer * (1 - output_out_layer) * error;
             gradient_hidden = zeros(number_of_hidden_neuron, 1);
             for j = 1:number_of_hidden_neuron
                 v = output_hidden_layer(j,1);
                 %iterate over each output nodes
                 gradient_output_coeff = gradient_output * w_hid_out(1, j);
-                gradient_hidden(j,1) = v * (1 - v) * gradient_output_coeff;
+                gradient_hidden(j,1) = abs(v * (1 - v) * gradient_output_coeff);
             end
             
             % Update weigths
@@ -108,7 +109,7 @@ while error > threshold_error
             end
             for k = 1:number_of_hidden_neuron - 1 % minus 1 for the bias
                 % For each row
-                w_in_hid(k,:) = w_in_hid(k,:) + learning_rate * gradient_hidden(k,1) * input_vector;
+                w_in_hid(k,:) = w_in_hid(k,:) + learning_rate * gradient_hidden(k,1) * input_vector(1,k);
             end
         end       
     end
