@@ -1,4 +1,4 @@
 function r = Reward(x,L)
-    r = abs(x - L);
+    r = (x - L)^2;
 end
 
