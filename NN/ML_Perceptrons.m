@@ -2,9 +2,7 @@ close all
 clear variables
 clc
 
-time = clock;
-seed = time(6);
-rng(seed);
+rng(55);
 %% XOR
 bias = -1; % Fixed value setted permanently to -1
 dataset = [0,0,bias; 0,1,bias; 1,0,bias; 1,1,bias]; % Input dataset (u)
@@ -13,7 +11,7 @@ column = length(dataset(1,:));
 output = [0, 1, 1, 0]; % Output value(v: it's known cause it's a supervised learning problem)
 %% Parameters and variables
 learning_rate = 0.1; % Higher it is, more swinging will be the convergence
-epochs = 3500;
+epochs = 2000;
 threshold_error = 0.00001;
 activationFunction = ActivationFunction.Sigmoid;
 errors = zeros(1,epochs);
@@ -37,7 +35,7 @@ output_hidden =  zeros(number_of_hidden_layer, 1);
 %% Algorithm
 while error > threshold_error
     for epoch = 1:epochs
-        disp('############ New epoch ###############')
+        fprintf('Epoch number: %f\n',epoch);
         % Reordering and merging
         u = dataset;
         t = output;
@@ -140,5 +138,6 @@ plot(x,y_2);
 ylim([-0.5 1.5]);
 xlim([-0.5 1.5]);
 scatter(dataset(:,1),dataset(:,2),'filled');
+title('XOR')
 xlabel('Gate A');
 ylabel('Gate B');
