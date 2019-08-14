@@ -12,7 +12,7 @@ row = length(dataset);
 column = length(dataset(1,:));
 output = [0, 1, 1, 0]; % Output value(v: it's known cause it's a supervised learning problem)
 %% Parameters and variables
-learning_rate = 0.3; % Higher it is, more swinging will be the convergence
+learning_rate = 0.1; % Higher it is, more swinging will be the convergence
 epochs = 3500;
 threshold_error = 0.00001;
 activationFunction = ActivationFunction.Sigmoid;

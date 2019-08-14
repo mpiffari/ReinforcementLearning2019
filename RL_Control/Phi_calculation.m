@@ -1,4 +1,4 @@
-function phi = Phi_calcultation(state, mu, sigma)
+function phi = Phi_calculation(state, mu, sigma)
     x = state(1,1);
     v = state(2,1);
     
