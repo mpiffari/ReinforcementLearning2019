@@ -20,11 +20,12 @@ stateSpace = [0;0]; % Column vector
 actionSpace = [- inf, + inf];
 
 % RBF parameters
-discret_angle = 5;
-discret_angularVelocity = 5;
+discret_angle = 6;
+discret_angularVelocity = 6;
 
 % SPSA parameters
-
+alpha = 
+gamma = 
 
 %Time
 number_of_episode = 3000;

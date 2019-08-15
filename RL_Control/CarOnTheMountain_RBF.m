@@ -135,7 +135,7 @@ for episode = 1:number_of_episode
         
         velocity(after) = velocity(now) + dt * (1/A)*(m * (a_t/D) - C - B * (velocity(now))^2);
         position(after) = x + dt * velocity(now);
-        reward = Reward(position(now), L);
+        reward = Reward(position(after), L);
         rewards(index,:) = reward;
         index = index + +1;
         
