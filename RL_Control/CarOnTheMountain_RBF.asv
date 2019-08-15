@@ -48,11 +48,9 @@ dt = 0.05; % [s]
 timeout = +inf; % [s] = final execution time
 
 % Random seed
-rng(50);
-% time = clock;
-% seed = time(6);
-% rng(seed);
-
+time = clock;
+seed = time(6);
+rng(seed);
 
 % Misc parameters
 now = 1;
@@ -88,7 +86,7 @@ for i = 1 : number_of_centrum
 end
 scatter(mu(:,1),mu(:,2));
 xlabel('Car position')
-ylabel('Car velocity')
+ylabel('')
 %% Design of the net
 number_of_input = 2; % Number of neurons in the input layer (u_i)
 number_of_hidden_layer = 1; % Number of hidden layers
@@ -106,6 +104,7 @@ phi_positive = rand(number_of_output, number_of_hidden_neuron);
 phi_negative = rand(number_of_output, number_of_hidden_neuron);
 
 %% Algorithm
+
 for episode = 1:number_of_episode
     fprintf('Episode number: %f\n',episode);
     position = [L/2, 0];

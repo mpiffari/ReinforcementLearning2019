@@ -6,59 +6,42 @@ clc
 % No need to use k-means to determine the center mu of each RBF
 
 %% Variables and parameters
+global cart;
 % System physic parameters
-h = 1; % Max height of the mountain [m]
-L = 4; % Length of the valley
-m = 1; % [kg]
-g = 9.81; % Gravity acceleration [m/s^2]
-maximumVelocity = sqrt(2 * g * h); % [m/s]
-maximumAcceleration = 4; % [m/s]
+g = cart.g; % Gravity acceleration [m/s^2]
+maximumAngle = cart.zmax; % [m/s]
+maximumAngularVelocity = cart.wmax; % [m/s]
 % stepDiscreteAcceleration = 0.01;
-
-% Plot parameters
-max = h;
-min = -1;
-x_mountains = min: 0.01 : L - min;
-y_mountains = zeros(length(x_mountains),1);
-for i = 1:length(x_mountains)
-    y_mountains(i,1) = Profile(x_mountains(i),L,h);
-end
 
 % State space
 numberOfState = 2; % Position and velocity
 stateSpace = [0;0]; % Column vector
-% actionSpace = -maximumAcceleration : stepDiscreteAcceleration :
-% maximumAcceleration; --> continuos action space
-actionSpace = [- maximumAcceleration, maximumAcceleration];
+% Action space --> we can apply any action
+actionSpace = [- inf, + inf];
 
 % RBF parameters
-discret_position = 5;
-discret_velocity = 5;
+discret_angle = 5;
+discret_angularVelocity = 5;
 
-% SARSA parameters
-epsilon_0 = 0.8;
-gamma = 1;
-learning_rate = 0.1; % Alpha
-isTerminalState = 0;
+% SPSA parameters
+
 
 %Time
 number_of_episode = 3000;
 t_i = 0; % [s]
-dt = 0.05; % [s]
-timeout = +inf; % [s] = final execution time
+dt = cart.dt; % [s]
+timeout = cart.tf; % [s] = final execution time
 
 % Random seed
-rng(50);
 % time = clock;
 % seed = time(6);
-% rng(seed);
-
+rng(55);
 
 % Misc parameters
 now = 1;
 after = 2;
-position = [L/2, 0];
-velocity = [0, 0];
+angle = [0, 0];
+angularVelocity = [0, 0];
 reward = 0;
 plot_rewards = zeros(number_of_episode, 1);
 index = 1;
@@ -68,8 +51,8 @@ fig0 = figure;
 fig1 = figure;
 %% Center and variance computation
 row = 1;
-position_step = L / (discret_position - 1);
-velocity_step = (maximumVelocity * 2) / (discret_velocity - 1);
+angle_step = L / (discret_angle - 1);
+angularVelocity_step = (maximumAngularVelocity * 2) / (discret_angularVelocity - 1);
 number_of_centrum = discret_position * discret_velocity;
 sigma_position = position_step / sqrt(2 * number_of_centrum);
 sigma_velocity = velocity_step / sqrt(2 * number_of_centrum);
@@ -86,9 +69,6 @@ end
 for i = 1 : number_of_centrum
     sigma(i,:) = [sigma_position, sigma_velocity];
 end
-scatter(mu(:,1),mu(:,2));
-xlabel('Car position')
-ylabel('Car velocity')
 %% Design of the net
 number_of_input = 2; % Number of neurons in the input layer (u_i)
 number_of_hidden_layer = 1; % Number of hidden layers
@@ -106,17 +86,11 @@ phi_positive = rand(number_of_output, number_of_hidden_neuron);
 phi_negative = rand(number_of_output, number_of_hidden_neuron);
 
 %% Algorithm
+
 for episode = 1:number_of_episode
-    fprintf('Episode number: %f\n',episode);
-    position = [L/2, 0];
-    velocity = [0, 0];
-    stateSpace(:,1) = [position(now); velocity(now)]; % Initialization of the state
-    sign_of_acc = sign(-1 + (1+1)*rand()); % Random initialization of the very first action
-    a_t = sign_of_acc * maximumAcceleration;
-    t = t_i;
-    isTerminal = 0;
-    index = 1;
-    rewards = [];
+       
+    for NH
+    
     while isTerminalState == 0 && t < timeout
         %%%%%%%%%%%%%% Print debug %%%%%%%%%%%%%%%%%%%%
         if debugActive == 1
@@ -170,33 +144,10 @@ for episode = 1:number_of_episode
         end
         
         %%%%%%%%%%%%%% Choose next action %%%%%%%%%%%%%%%%%%%%
-        Q_positive = FunctionApproximator(w_hid_out_positive, [position(after); velocity(after)], mu, sigma);
-        Q_negative = FunctionApproximator(w_hid_out_negative, [position(after); velocity(after)], mu, sigma);
-        if Q_negative > Q_positive
-            nextAction = - maximumAcceleration;
-        else
-            nextAction = maximumAcceleration;
-        end
         
-        epsilon = epsilon_0 / episode;
-        if rand() < epsilon
-            sign_of_acc = sign(-1 + (1+1)*rand());
-            nextAction = sign_of_acc * maximumAcceleration;
-        end
         
         %%%%%%%%%%%%%% Weights update %%%%%%%%%%%%%%%%%%%%
-        gradient_Q = Phi_calculation([position(now); velocity(now)], mu, sigma);
-        if nextAction > 0
-            Q_t1 = FunctionApproximator(w_hid_out_positive, [position(after); velocity(after)], mu, sigma);
-            Q_t = FunctionApproximator(w_hid_out_positive, [position(now); velocity(now)], mu, sigma);
-            % Keep it as a vector (output neuron x hidden neuron)
-            w_hid_out_positive = w_hid_out_positive + learning_rate * (reward + gamma * Q_t1 - Q_t) * gradient_Q';
-        else
-            Q_t1 = FunctionApproximator(w_hid_out_negative, [position(after); velocity(after)], mu, sigma);
-            Q_t = FunctionApproximator(w_hid_out_negative, [position(now); velocity(now)], mu, sigma);
-            % Keep it as a vector (output neuron x hidden neuron)
-            w_hid_out_negative = w_hid_out_negative + learning_rate * (reward + gamma * Q_t1 - Q_t) * gradient_Q';
-        end
+
         
         %%%%%%%%%%%%%% State, action and time update %%%%%%%%%%%%%%%%%%%%
         a_t = nextAction;
