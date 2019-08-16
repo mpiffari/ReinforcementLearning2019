@@ -17,17 +17,13 @@ cart.numberOfState = 4;
 
 cart.maximumAngle = pi/6;
 cart.maximumAngularVelocity = sqrt((1-cos(cart.zMax)) * cart.g / cart.l);
-cart.initialAngle = 0; % TODO: randomize
-cart.initialAngularVelocity = 0;
 
 %% Parameters of the algorithm
 % RBF parameters
 cart.discret_angle = 6;
 cart.discret_angularVelocity = 6;
 cart.number_of_centrum = cart.discret_angle * cart.discret_angularVelocity;
-cart.mu = zeros(cart.number_of_centrum, 2);
-cart.sigma = zeros(cart.number_of_centrum, 2);
-
-cart.fig1 = figure;
+cart.mu = zeros(number_of_centrum, 2);
+cart.sigma = zeros(number_of_centrum, 2);
 
 

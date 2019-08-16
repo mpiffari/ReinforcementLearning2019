@@ -50,6 +50,7 @@ plot_rewards = zeros(number_of_episode, 1);
 index = 1;
 plotActive = 0;
 debugActive = 0;
+fig1 = figure;
 %% Center and variance computation
 row = 1;
 angle_step = (2* cart.maximumAngle) / (cart.discret_angle - 1);
@@ -97,12 +98,13 @@ for episode = 1:number_of_episode
         c_k = c /(k + 1)^gamma;
         
         %%%%%%%%%%%%%% Rollouts %%%%%%%%%%%%%%%%%%%%
-        J_plus = Rollout(state, (w_hid_out + c_k * delta));
-        J_minus = Rollout(state, (w_hid_out - c_k * delta));
+        J_plus = Rollout(state, (W + c_k * delta));
+        J_minus = Rollout(state, (W - c_k * delta));
         
         JDelta = [JDelta; (J_plus - J_minus)];
         Delta = [Delta; c_k * delta];
     end
+    cartPlot(h, q)
     a_k = a / (k + 1)^alpha;
     w_hid_out = w_hid_out + 0.5  * a_k * inv(Delta' * Delta) * Delta' * JDelta;
     k = k +1;
