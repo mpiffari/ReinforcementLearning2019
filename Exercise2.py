@@ -16,7 +16,18 @@ complex_environment = [[' ', ' ', ' ', ' ', ' '],
                     [' ', '#', ' ', ' ', ' '],
                     [' ', '#', ' ', ' ', ' ']]
 
-environment = simple_environment
+more_complex_environment = [[' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', '-',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', '', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', '+', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' '],
+                    [' ', '#', ' ', ' ', ' ',' ', ' ', ' ', ' ', ' ']]
+
+environment = complex_environment
 
 #Dimensions of the environment
 COLUMNS = len(environment[0])
@@ -34,7 +45,7 @@ Q_matrix = [[[0, 0, 0, 0] for x in range(COLUMNS)] for y in range(ROWS)]
 action_selected_matrix = [[-1 for x in range(COLUMNS)] for y in range(ROWS)]
 step_size = 0.1  # Alpha
 discount_rate = 0.9  # Gamma
-epsilon = 1  # ϵ for greedy
+epsilon = 0.1  # ϵ for greedy
 episode_amount = 100
 reward_for_each_episode = [0 for x in range(episode_amount)]
 index = 0
