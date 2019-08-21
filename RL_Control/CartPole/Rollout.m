@@ -19,16 +19,17 @@ function reward = Rollout(state, W)
     
     while isTerminal == 0 && t < timeout
         %%%%%%%%%%%%%% Chose action %%%%%%%%%%%%%
-        phi = PhiCalculation(state, mu, sigma);
+        phi = Phi_Calculation(state, mu, sigma);
         a_t = W * phi;
         %%%%%%%%%%%%%% Chose next state %%%%%%%%%%%%%       
         deltaState = cartDynamics(s_t, a_t);
-        s_t1(positionIndex,1) = st(positionIndex,1) + cart.dT * deltaState(positionIndex,1) ; % Next position
-        s_t1(angleIndex,1) = st(angleIndex,1) + cart.dT * deltaState(angleIndex,1) ; % Next angle
-        s_t1(velocityIndex,1) = st(velocityIndex,1) + cart.dT * deltaState(velocityIndex,1) ; % Next velocity
-        s_t1(angularVelocityIndex,1) = st(angularVelocityIndex,1) + cart.dT * deltaState(angularVelocityIndex,1) ; % Next angular velocity
+        s_t1(1,positionIndex) = s_t(positionIndex,1) + cart.dT * deltaState(positionIndex,1) ; % Next position
+        s_t1(1,angleIndex) = s_t(angleIndex,1) + cart.dT * deltaState(angleIndex,1) ; % Next angle
+        s_t1(1,velocityIndex) = s_t(velocityIndex,1) + cart.dT * deltaState(velocityIndex,1) ; % Next velocity
+        s_t1(1,angularVelocityIndex) = s_t(angularVelocityIndex,1) + cart.dT * deltaState(angularVelocityIndex,1) ; % Next angular velocity
         
-        if isTerminal(s_t1) == 1 
+        flagterminalState = checkIfIsTerminalState(s_t1);
+        if flagterminalState == 1 
             isTerminal = 1;
         else
             isTerminal = 0;

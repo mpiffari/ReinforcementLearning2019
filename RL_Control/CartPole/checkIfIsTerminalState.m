@@ -1,7 +1,7 @@
-function isTerminal = isTerminal(state)
+function isTerminal = checkIfIsTerminalState(state)
     global cart
-    superiorAngle = cart.zMax;
-    inferiorAngle = - cart.wMax;
+    superiorAngle = cart.maximumAngle;
+    inferiorAngle = - cart.maximumAngle;
     actualAngle = state(2);
     if (actualAngle > superiorAngle) || (actualAngle < inferiorAngle)
         isTerminal = 1;

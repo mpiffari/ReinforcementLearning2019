@@ -16,7 +16,7 @@ cart.tf = 10; % Timeout
 cart.numberOfState = 4;
 
 cart.maximumAngle = pi/6;
-cart.maximumAngularVelocity = sqrt((1-cos(cart.zMax)) * cart.g / cart.l);
+cart.maximumAngularVelocity = sqrt((1-cos(cart.maximumAngle)) * cart.g / cart.l);
 cart.initialAngle = 0; % TODO: randomize
 cart.initialAngularVelocity = 0;
 

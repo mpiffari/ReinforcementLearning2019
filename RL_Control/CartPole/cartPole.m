@@ -11,8 +11,7 @@ global cart;
 % System physic parameters
 g = cart.g; % Gravity acceleration [m/s^2]
 
-% State: X =[x th v w]
-% State space
+% State space: X =[x th v w]
 numberOfState = 4; % Position and velocity
 initialStateSpace = [0; cart.initialAngle; 0; cart.initialAngularVelocity]; % Column vector
 % Action space --> we can apply any action
@@ -86,6 +85,14 @@ w_hid_out =  -1 + (1+1)*rand(number_of_output, number_of_hidden_neuron);
 
 k = 0;
 for episode = 1:number_of_episode
+    
+    upAngleLimit = cart.maximumAngle;
+    downAngleLimit = -cart.maximumAngle;
+    initialAngle = (downAngleLimit - upAngleLimit).*rand(1,1) + upAngleLimit;
+    initialStateSpace = [0; initialAngle; 0; cart.initialAngularVelocity]; % Column vector
+    JDelta = [];
+    Delta = [];
+    
     for i = 1:N_H
         %%%%%%%%%%%%%% Print debug %%%%%%%%%%%%%%%%%%%%
         if debugActive == 1
@@ -93,12 +100,12 @@ for episode = 1:number_of_episode
         end
         
         s_0 = initialStateSpace;
-        delta = Bernoulli(0.5, number_of_centrum);
+        delta = Bernoulli(0.5, cart.number_of_centrum);
         c_k = c /(k + 1)^gamma;
         
         %%%%%%%%%%%%%% Rollouts %%%%%%%%%%%%%%%%%%%%
-        J_plus = Rollout(state, (w_hid_out + c_k * delta));
-        J_minus = Rollout(state, (w_hid_out - c_k * delta));
+        J_plus = Rollout(s_0, (w_hid_out + c_k * delta));
+        J_minus = Rollout(s_0, (w_hid_out - c_k * delta));
         
         JDelta = [JDelta; (J_plus - J_minus)];
         Delta = [Delta; c_k * delta];
