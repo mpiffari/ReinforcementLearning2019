@@ -14,10 +14,7 @@ function phi = Phi_calculation(state, mu, sigma)
        c_v = mu(i,2);
        sigma_x = sigma(i,1);
        sigma_v = sigma(i,2);
-       
-       coeff_1 = (x - c_x)^2 / (2 * sigma_x^2);
-       coeff_2 = (v - c_v)^2 / (2 * sigma_v^2);
-       phi(i,:) = exp(-(coeff_1 + coeff_2));
+       phi(i,:) = Phi(x,v,c_x,c_v,sigma_x, sigma_v);
     end
 end
 
