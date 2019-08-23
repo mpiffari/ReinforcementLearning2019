@@ -23,7 +23,7 @@ a = 10;
 alpha = 1;
 gamma = 1/6;
 c_k = 0; % = perturbation size
-N_H = 10;
+N_H = 50;
 delta = 0;
 JDelta = [];
 Delta = [];
@@ -103,15 +103,15 @@ for episode = 1:number_of_episode
         delta = Bernoulli(0.5, cart.number_of_centrum);
         c_k = c /(k + 1)^gamma;
         
-        %%%%%%%%%%%%%% Rollouts %%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%% Rollouts %%%%%%%%%%%%%%%%%%%
         J_plus = Rollout(s_0, (w_hid_out + c_k * delta));
         J_minus = Rollout(s_0, (w_hid_out - c_k * delta));
         
-        JDelta = [JDelta; (J_plus - J_minus)];
-        Delta = [Delta; c_k * delta];
+        JDelta = [JDelta, (J_plus - J_minus)];
+        Delta = [Delta, c_k * delta'];
     end
     a_k = a / (k + 1)^alpha;
-    w_hid_out = w_hid_out + 0.5  * a_k * inv(Delta' * Delta) * Delta' * JDelta;
+    w_hid_out = w_hid_out + 0.5  * a_k * JDelta * inv(Delta' * Delta) * Delta';
     k = k +1;
 end
 
